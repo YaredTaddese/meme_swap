@@ -38,6 +38,9 @@ const useStyles = makeStyles(theme => ({
   },
   picker_image: {
     width: '100%',
+  },
+  divider: {
+    backgroundColor: '#dadada',
   }
 }));
 
@@ -78,12 +81,12 @@ export default function App() {
           <AppBar position="static">
             <Toolbar>
               <Typography variant="h6" className={classes.title}>
-                Meme Face Swap
+                Personalized Meme Service
               </Typography>
             </Toolbar>
           </AppBar>
 
-          <Paper square>
+          <Paper square elevation={3}>
             <Grid container justify='center' className={classes.section1}>
               <Grid item>
                 <Typography variant='h6' gutterBottom sm={12}>
@@ -121,7 +124,7 @@ export default function App() {
               </Grid>
             </Grid>
 
-            <Divider variant="middle" />
+            <Divider variant="middle" className={classes.divider} />
 
             <Grid container justify='center' className={classes.section1}>
               <Grid item>
@@ -136,7 +139,7 @@ export default function App() {
               </Grid>
             </Grid>
 
-            <Divider variant="middle" />
+            <Divider variant="middle" className={classes.divider} />
 
             <Grid container justify='center' className={classes.section1}>
               <Grid item>
