@@ -46,14 +46,14 @@ export default function ImageUploader() {
                                 />
                                 <Typography variant="body2">
                                     Click to change the selected image
-                </Typography>
+                                </Typography>
                             </Grid>
                         ) : (
                                 <Grid>
                                     <CloudUpload style={{ fontSize: "48px" }} />
                                     <Typography variant="body2">
                                         Click to select an image, or drag and drop it here
-                </Typography>
+                                    </Typography>
                                 </Grid>
                             )}
 
