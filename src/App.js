@@ -5,12 +5,14 @@ import './App.css';
 import ImageUploader from './ImageUploader';
 import {
   Container, Divider, Grid, Typography, AppBar,
-  Toolbar, Button, Paper, Slide
+  Toolbar, Button, Paper, Slide, Card, CardContent, IconButton
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import LeftArrowIcon from '@material-ui/icons/ChevronLeft';
+import RightArrowIcon from '@material-ui/icons/ChevronRight';
 
 const theme = createMuiTheme({
   palette: {
@@ -38,9 +40,13 @@ const useStyles = makeStyles(theme => ({
   },
   picker_image: {
     width: '100%',
+    height: '100px',
   },
   divider: {
     backgroundColor: '#dadada',
+  },
+  card: {
+    padding: '4px',
   }
 }));
 
@@ -94,7 +100,17 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item sm={12}>
-                <Grid container spacing={1}>
+                <Grid container>
+                  <Grid item xs={1}>
+                  <IconButton onClick={slide_left} 
+                            disabled={picker_index >= default_images_length - picker_length}>
+                    <LeftArrowIcon />
+                  </IconButton>
+                  </Grid>
+                  <Grid item xs>
+                  <Card className={classes.card}>
+                    <CardContent className={classes.card}>
+                      <Grid container spacing={1}>
                   {
                     default_images.map((img, i) => (
                       (i >= picker_index && i < picker_index + picker_length)
@@ -102,17 +118,17 @@ export default function App() {
                         <Slide direction={(i === picker_index) ? 'right' : 'left'} in={i >= picker_index && i < picker_index + picker_length}>
                           <img src={img} className={classes.picker_image} />
                         </Slide>
-                      </Grid>
-
+                      </Grid> 
                     ))
                   }
-                  <Grid item xs={12}>
-                    <Button onClick={slide_left} disabled={picker_index >= default_images_length - picker_length}>
-                      Left
-                    </Button>
-                    <Button onClick={slide_right} disabled={picker_index === 0}>
-                      Right
-                    </Button>
+                  </Grid>
+                    </CardContent>
+                  </Card>
+                  </Grid>
+                  <Grid item xs={1}>
+                  <IconButton onClick={slide_right} disabled={picker_index === 0}>
+                    <RightArrowIcon />
+                  </IconButton>
                   </Grid>
                 </Grid>
               </Grid>
