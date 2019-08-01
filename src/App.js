@@ -4,15 +4,19 @@ import './App.css';
 
 import {
   Container, Divider, Grid, Typography, AppBar,
-  Toolbar, Button, Paper
+  Toolbar, Button, Paper, IconButton
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
 
 import ImageUploader from './ImageUploader';
 import ImagePicker from './ImagePicker';
+
+const {ImageFileIn, ImageFileOut} = require('./image_swap_pb');
+const {FaceSwapClient} = require('./image_swap_grpc_web_pb');
 
 const theme = createMuiTheme({
   palette: {
@@ -45,8 +49,13 @@ export default function App() {
 
   const [meme_image, setMeme_image] = useState(null);
   const [face_image, setFace_image] = useState(null);
+  const [result_image, setResult_image] = useState(null);
 
   function onDrop(files) {
+    ;
+  }
+
+  function swapFaces() {
     ;
   }
 
@@ -63,7 +72,7 @@ export default function App() {
             </Toolbar>
           </AppBar>
 
-          <Paper square elevation={3}>
+          {!result_image && <Paper square>
             <Grid container justify='center' className={classes.section1}>
               <Grid item xs={12}>
                 <Typography variant='h6' gutterBottom className={classes.title}>
@@ -100,13 +109,40 @@ export default function App() {
 
             <Grid container justify='center' className={classes.section1}>
               <Grid item>
-                <Button variant='contained' color='primary'>
+                <Button variant='contained' color='primary' onClick={swapFaces}>
                   <RecentActorsIcon className={classes.leftIcon} />
                   Swap Face Image
                 </Button>
               </Grid>
             </Grid>
-          </Paper>
+          </Paper>}
+
+          {result_image && <Paper square>
+            <Grid container justify='center' className={classes.section1}>
+              <Grid item xs={12}>
+                <Typography variant='h6' gutterBottom className={classes.title}>
+                  Face Swapped Meme Image
+                </Typography>
+              </Grid>
+              <Grid item xs={12} className={classes.gutterBottom}>
+                <Paper square>
+                  <img src={result_image} alt='Meme' />
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Grid container justify='center'>
+                  <Grid item>
+                    <IconButton onClick=''>
+                      <DownloadIcon />
+                    </IconButton>
+                  </Grid>
+
+                </Grid>
+              </Grid>
+            </Grid>
+
+          </Paper>}
         </Container>
       </MuiThemeProvider>
     </React.Fragment>
