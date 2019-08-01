@@ -2,17 +2,17 @@ import React, { useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import ImageUploader from './ImageUploader';
 import {
   Container, Divider, Grid, Typography, AppBar,
-  Toolbar, Button, Paper, Slide, Card, CardContent, IconButton
+  Toolbar, Button, Paper
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
 import blue from '@material-ui/core/colors/blue';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
-import LeftArrowIcon from '@material-ui/icons/ChevronLeft';
-import RightArrowIcon from '@material-ui/icons/ChevronRight';
+
+import ImageUploader from './ImageUploader';
+import ImagePicker from './ImagePicker';
 
 const theme = createMuiTheme({
   palette: {
@@ -32,21 +32,11 @@ const useStyles = makeStyles(theme => ({
   section1: {
     padding: theme.spacing(3, 2),
   },
-  section2: {
-    padding: theme.spacing(2),
-  },
   leftIcon: {
     marginRight: theme.spacing(1),
   },
-  picker_image: {
-    width: '100%',
-    height: '100px',
-  },
-  divider: {
-    backgroundColor: '#dadada',
-  },
-  card: {
-    padding: '4px',
+  gutterBottom: {
+    paddingBottom: theme.spacing(2),
   }
 }));
 
@@ -55,28 +45,9 @@ export default function App() {
 
   const [meme_image, setMeme_image] = useState(null);
   const [face_image, setFace_image] = useState(null);
-  const [default_images, setDefault_images] = useState([
-    'images/anchorman.jpg',
-    'images/aniston-sumo.jpg',
-    'images/baby2.jpg',
-    'images/black_and_white.jpg',
-    'images/game of thrones2.jpg',
-    'images/game_of_thrones3.jpg',
-    'images/kalise.jpg',
-  ]);
-  const [picker_index, setPicker_index] = useState(0);
-  const picker_length = 3;
-  const default_images_length = 7;
 
   function onDrop(files) {
     ;
-  }
-
-  function slide_left() {
-    setPicker_index(picker_index + 1);
-  }
-  function slide_right() {
-    setPicker_index(picker_index - 1);
   }
 
   return (
@@ -94,68 +65,38 @@ export default function App() {
 
           <Paper square elevation={3}>
             <Grid container justify='center' className={classes.section1}>
-              <Grid item>
-                <Typography variant='h6' gutterBottom sm={12}>
+              <Grid item xs={12}>
+                <Typography variant='h6' gutterBottom className={classes.title}>
                   Select Meme Image
                 </Typography>
               </Grid>
-              <Grid item sm={12}>
-                <Grid container>
-                  <Grid item xs={1}>
-                  <IconButton onClick={slide_left} 
-                            disabled={picker_index >= default_images_length - picker_length}>
-                    <LeftArrowIcon />
-                  </IconButton>
-                  </Grid>
-                  <Grid item xs>
-                  <Card className={classes.card}>
-                    <CardContent className={classes.card}>
-                      <Grid container spacing={1}>
-                  {
-                    default_images.map((img, i) => (
-                      (i >= picker_index && i < picker_index + picker_length)
-                      && <Grid item xs={4}>
-                        <Slide direction={(i === picker_index) ? 'right' : 'left'} in={i >= picker_index && i < picker_index + picker_length}>
-                          <img src={img} className={classes.picker_image} />
-                        </Slide>
-                      </Grid> 
-                    ))
-                  }
-                  </Grid>
-                    </CardContent>
-                  </Card>
-                  </Grid>
-                  <Grid item xs={1}>
-                  <IconButton onClick={slide_right} disabled={picker_index === 0}>
-                    <RightArrowIcon />
-                  </IconButton>
-                  </Grid>
-                </Grid>
+              <Grid item xs={12} className={classes.gutterBottom}>
+                <ImagePicker />
               </Grid>
 
-              <Grid item sm={10}>
+              <Grid item xs={10}>
                 <ImageUploader
 
                 />
               </Grid>
             </Grid>
 
-            <Divider variant="middle" className={classes.divider} />
+            <Divider variant="middle" />
 
             <Grid container justify='center' className={classes.section1}>
-              <Grid item>
-                <Typography variant='h6' gutterBottom sm={12}>
+              <Grid item xs={12}>
+                <Typography variant='h6' gutterBottom className={classes.title}>
                   Select Face Image to swap
                 </Typography>
               </Grid>
-              <Grid item sm={10}>
+              <Grid item xs={10}>
                 <ImageUploader
 
                 />
               </Grid>
             </Grid>
 
-            <Divider variant="middle" className={classes.divider} />
+            <Divider variant="middle" />
 
             <Grid container justify='center' className={classes.section1}>
               <Grid item>
