@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export default function ImageUploader() {
+export default function ImageUploader(props) {
     const classes = useStyles();
 
     const [image, setImage] = useState(null);
@@ -27,8 +27,9 @@ export default function ImageUploader() {
     function onDrop(accepted_files) {
         console.log("files: ", accepted_files);
 
-        setImage(accepted_files);
+        setImage(accepted_files[0]);
         setPreview_image_url(URL.createObjectURL(accepted_files[0]));
+        props.handleImageUpload(accepted_files[0]);
     }
 
     return (

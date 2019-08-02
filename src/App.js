@@ -15,8 +15,8 @@ import DownloadIcon from '@material-ui/icons/CloudDownload';
 import ImageUploader from './ImageUploader';
 import ImagePicker from './ImagePicker';
 
-const {ImageFileIn, ImageFileOut} = require('./image_swap_pb');
-const {FaceSwapClient} = require('./image_swap_grpc_web_pb');
+const { ImageFileIn, ImageFileOut } = require('./image_swap_pb');
+const { FaceSwapClient } = require('./image_swap_grpc_web_pb');
 
 const theme = createMuiTheme({
   palette: {
@@ -51,24 +51,68 @@ export default function App() {
   const [face_image, setFace_image] = useState(null);
   const [result_image, setResult_image] = useState(null);
 
-  function onDrop(files) {
-    ;
-  }
+  let file_reader = new FileReader();   // to read face image and meme image as base64
 
   function swapFaces() {
     test_grpc();
   }
 
-  function test_grpc() {
-    var client = new FaceSwapClient('http://localhost:8080');
+  async function test_grpc() {
+    // read meme and face images as base 64
+    let meme_base64 = null, face_base64 = null;
 
-    var request = new ImageFileIn();
-    request.setInputImage();
-    request.setMemeImage();
+    try {
+      meme_base64 = await promiseFileAsDataURL(meme_image);
+      face_base64 = await promiseFileAsDataURL(face_image);
+    } catch (err) {
+      console.log("error while base64 reading: ", err);
+    }
 
-    client.swapFaces(request, {}, (err, response) => {
-      console.log("response", response.getImageOut());
+    if (!meme_base64 || !face_base64) {
+      return;
+    }
+
+    // call grpc service
+    let client = new FaceSwapClient('http://localhost:8080');
+
+    let request = new ImageFileIn();
+    request.setInputImage(face_base64);
+    request.setMemeImage(meme_base64);
+
+    client.faceSwap(request, {}, (err, response) => {
+      if (err) {
+        console.log("error:", err);
+      } else {
+        console.log("response", response.getImageOut());
+      }
     });
+  }
+
+  /**
+   * Read input file as data_url(base64) as a promise
+   * @param {input file} file read input file 
+   * @returns {promise} data_url result of the file as a promise 
+   */
+  function promiseFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+      file_reader.onerror = () => {
+        file_reader.abort();
+        reject(new DOMException("Problem parsing input file."));
+      }
+
+      file_reader.onloadend = () => {
+        resolve(file_reader.result);
+      };
+      file_reader.readAsDataURL(file);
+    });
+  }
+
+  function handleMemeImageUpload(file) {
+    setMeme_image(file);
+  }
+
+  function handleFaceImageUpload(file) {
+    setFace_image(file);
   }
 
   return (
@@ -96,7 +140,7 @@ export default function App() {
               </Grid>
 
               <Grid item xs={10}>
-                <ImageUploader
+                <ImageUploader handleImageUpload={handleMemeImageUpload}
 
                 />
               </Grid>
@@ -111,7 +155,7 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item xs={10}>
-                <ImageUploader
+                <ImageUploader handleImageUpload={handleFaceImageUpload}
 
                 />
               </Grid>
