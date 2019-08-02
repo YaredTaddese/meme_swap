@@ -56,7 +56,19 @@ export default function App() {
   }
 
   function swapFaces() {
-    ;
+    test_grpc();
+  }
+
+  function test_grpc() {
+    var client = new FaceSwapClient('http://localhost:8080');
+
+    var request = new ImageFileIn();
+    request.setInputImage();
+    request.setMemeImage();
+
+    client.swapFaces(request, {}, (err, response) => {
+      console.log("response", response.getImageOut());
+    });
   }
 
   return (
