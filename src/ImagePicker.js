@@ -15,6 +15,10 @@ const useStyles = makeStyles(theme => ({
     picker_image_paper: {
         height: '100px',
         cursor: 'pointer',
+        transition: 'transform .2s',
+        '&:hover': {
+            transform: 'scale(1.1)'
+        }
     },
     picker_image_grid: {
         padding: '2px',

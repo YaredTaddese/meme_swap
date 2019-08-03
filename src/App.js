@@ -4,7 +4,7 @@ import './App.css';
 
 import {
   Container, Divider, Grid, Typography, AppBar,
-  Toolbar, Button, Paper, IconButton
+  Toolbar, Button, Paper, IconButton, CircularProgress
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -44,6 +44,9 @@ const useStyles = makeStyles(theme => ({
   },
   preview_image: {
     maxWidth: "100%"
+  },
+  image_paper: {
+    lineHeight: 0,
   }
 }));
 
@@ -53,10 +56,12 @@ export default function App() {
   const [meme_image, setMeme_image] = useState(null);
   const [face_image, setFace_image] = useState(null);
   const [result_image, setResult_image] = useState(null);
+  const [calling, setCalling] = useState(false);
 
   let file_reader = new FileReader();   // to read face image and meme image as base64
 
   function swapFaces() {
+    setCalling(true);
     test_grpc();
   }
 
@@ -74,7 +79,14 @@ export default function App() {
     let meme_base64 = null, face_base64 = null;
 
     try {
-      meme_base64 = await promiseFileAsDataURL(meme_image);
+      if (typeof meme_image === 'string' || meme_image instanceof String) {
+        // assume it is image path or base64 encoded image
+        meme_base64 = meme_image;
+      } else {
+        // assume it is image from input file
+        meme_base64 = await promiseFileAsDataURL(meme_image);
+      }
+          
       meme_base64 = crop_mime(meme_base64);
       face_base64 = await promiseFileAsDataURL(face_image);
       face_base64 = crop_mime(face_base64);
@@ -124,16 +136,48 @@ export default function App() {
     });
   }
 
+  /**
+   * Read image path as data_url(base64) as a promise
+   * @param {string} image_path path of the image
+   * @returns {promise} data_url result of the image as a promise 
+   */
+  function promiseImagePathAsDataURL(image_path) {
+    return new Promise((resolve, reject) => {
+      let image = new Image();
+      
+      image.onload = function (){
+        let canvas = document.createElement('canvas');
+        canvas.width = this.naturalWidth;
+        canvas.height = this.naturalHeight;
+
+        canvas.getContext('2d').drawImage(this, 0, 0);
+        let image_base64 = canvas.toDataURL();
+        console.log('canvas.todataurl: ', image_base64);
+        resolve(image_base64);
+      }
+      
+      image.onerror = () => {
+        reject(new DOMException("Problem loading image to canvas."));
+      }
+
+      image.src = image_path;
+    });
+  }
+
   function handleMemeImageUpload(file) {
     setMeme_image(file);
+    console.log("meme image: ", meme_image);
   }
 
   function handleFaceImageUpload(file) {
     setFace_image(file);
   }
 
-  function handleImagePick(file) {
-    setMeme_image(file);
+  async function handleImagePick(file) {
+    let meme = await promiseImagePathAsDataURL(file);
+    console.log(`handleImagePick(${file}): meme image: `, meme_image);
+    setMeme_image(meme);
+    
   }
 
   return (
@@ -162,7 +206,7 @@ export default function App() {
 
               <Grid item xs={10}>
                 <ImageUploader handleImageUpload={handleMemeImageUpload}
-                  image={meme_image}
+                  preview_image={meme_image}
                 />
               </Grid>
             </Grid>
@@ -177,7 +221,7 @@ export default function App() {
               </Grid>
               <Grid item xs={10}>
                 <ImageUploader handleImageUpload={handleFaceImageUpload}
-
+                  preview_image={face_image}
                 />
               </Grid>
             </Grid>
@@ -186,10 +230,15 @@ export default function App() {
 
             <Grid container justify='center' className={classes.section1}>
               <Grid item>
-                <Button variant='contained' color='primary' onClick={swapFaces}>
+                <Button variant='contained' color='primary' onClick={swapFaces} disabled={calling}>
                   <RecentActorsIcon className={classes.leftIcon} />
                   Swap Face Image
                 </Button>
+              </Grid>
+              <Grid item>
+                {
+                  calling && <CircularProgress />
+                }
               </Grid>
             </Grid>
           </Paper>}
@@ -202,7 +251,7 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item xs={12} className={classes.gutterBottom}>
-                <Paper square>
+                <Paper square className={classes.image_paper}>
                   <img src={result_image} alt='Meme' className={classes.preview_image} />
                 </Paper>
               </Grid>
@@ -210,8 +259,8 @@ export default function App() {
               <Grid item xs={12}>
                 <Grid container justify='center'>
                   <Grid item>
-                    <IconButton>
-                      <DownloadIcon />
+                    <IconButton color="primary">
+                      <DownloadIcon fontSize='large'/>
                     </IconButton>
                   </Grid>
 

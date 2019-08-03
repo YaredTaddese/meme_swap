@@ -21,19 +21,21 @@ const useStyles = makeStyles(theme => ({
 export default function ImageUploader(props) {
     const classes = useStyles();
 
-    // const [image, setImage] = useState((props.image) ? props.image : null);
-    const [preview_image_url, setPreview_image_url] = useState(null);
-
-    // change image state whenever props.image is changed kind of code
-    if (props.image !== preview_image_url) {
-        setPreview_image_url(props.image);
+    
+    let preview_image = null;
+    if (props.preview_image) {
+        if (typeof props.preview_image === 'string' || props.preview_image instanceof String) {
+            // assume it is image path or base64 encoded image
+            preview_image = props.preview_image;
+        } else {
+            // assume it is image from input file
+            preview_image = URL.createObjectURL(props.preview_image); 
+        }
     }
 
     function onDrop(accepted_files) {
         console.log("files: ", accepted_files);
 
-        // setImage(accepted_files[0]);
-        setPreview_image_url(URL.createObjectURL(accepted_files[0]));
         props.handleImageUpload(accepted_files[0]);
     }
 
@@ -43,10 +45,10 @@ export default function ImageUploader(props) {
                 {({ getRootProps, getInputProps }) => (
                     <div {...getRootProps()} className={classes.dropzone}>
                         <input {...getInputProps()} />
-                        {preview_image_url ? (
+                        {preview_image ? (
                             <Grid>
                                 <img
-                                    src={preview_image_url}
+                                    src={preview_image}
                                     alt="Preview"
                                     className={classes.preview_image}
                                 />
