@@ -41,6 +41,9 @@ const useStyles = makeStyles(theme => ({
   },
   gutterBottom: {
     paddingBottom: theme.spacing(2),
+  },
+  preview_image: {
+    maxWidth: "100%"
   }
 }));
 
@@ -63,7 +66,7 @@ export default function App() {
       i++;
     }
 
-    return base64_string.slice(i+1);
+    return base64_string.slice(i + 1);
   }
 
   async function test_grpc() {
@@ -95,7 +98,9 @@ export default function App() {
       if (err) {
         console.log("grpc callback error:", err);
       } else {
-        console.log("response", response.getImageOut());
+        console.log("response: ", response.getImageOut());
+        let mime = 'data:image/jpeg;base64,';   // ! assumes server result as jpeg
+        setResult_image(mime + response.getImageOut())
       }
     });
   }
@@ -127,6 +132,10 @@ export default function App() {
     setFace_image(file);
   }
 
+  function handleImagePick(file) {
+    setMeme_image(file);
+  }
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -148,12 +157,12 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item xs={12} className={classes.gutterBottom}>
-                <ImagePicker />
+                <ImagePicker handleImagePick={handleImagePick} />
               </Grid>
 
               <Grid item xs={10}>
                 <ImageUploader handleImageUpload={handleMemeImageUpload}
-
+                  image={meme_image}
                 />
               </Grid>
             </Grid>
@@ -194,14 +203,14 @@ export default function App() {
               </Grid>
               <Grid item xs={12} className={classes.gutterBottom}>
                 <Paper square>
-                  <img src={result_image} alt='Meme' />
+                  <img src={result_image} alt='Meme' className={classes.preview_image} />
                 </Paper>
               </Grid>
 
               <Grid item xs={12}>
                 <Grid container justify='center'>
                   <Grid item>
-                    <IconButton onClick=''>
+                    <IconButton>
                       <DownloadIcon />
                     </IconButton>
                   </Grid>

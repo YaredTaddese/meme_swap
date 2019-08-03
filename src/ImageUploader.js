@@ -21,13 +21,18 @@ const useStyles = makeStyles(theme => ({
 export default function ImageUploader(props) {
     const classes = useStyles();
 
-    const [image, setImage] = useState(null);
+    // const [image, setImage] = useState((props.image) ? props.image : null);
     const [preview_image_url, setPreview_image_url] = useState(null);
+
+    // change image state whenever props.image is changed kind of code
+    if (props.image !== preview_image_url) {
+        setPreview_image_url(props.image);
+    }
 
     function onDrop(accepted_files) {
         console.log("files: ", accepted_files);
 
-        setImage(accepted_files[0]);
+        // setImage(accepted_files[0]);
         setPreview_image_url(URL.createObjectURL(accepted_files[0]));
         props.handleImageUpload(accepted_files[0]);
     }

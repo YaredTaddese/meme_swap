@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-export default function ImagePicker() {
+export default function ImagePicker(props) {
     const classes = useStyles();
 
     const [default_images, setDefault_images] = useState([
@@ -48,6 +48,11 @@ export default function ImagePicker() {
         setPicker_index(picker_index - 1);
     }
 
+    function handleImagePick(img) {
+        props.handleImagePick(img);
+        console.log('image pick: ', img);
+    }
+
     return (
         <Grid container alignItems="center">
             <Grid item xs={1}>
@@ -63,10 +68,11 @@ export default function ImagePicker() {
                             default_images.map((img, i) => (
                                 (i >= picker_index && i < picker_index + picker_length)
                                 && <Grid item xs={4} className={classes.picker_image_grid}>
-                                    <Paper square className={classes.picker_image_paper}>
+                                    <Paper square className={classes.picker_image_paper} onClick={() => handleImagePick(img)}>
                                         <Slide direction={(i === picker_index) ? 'right' : 'left'}
                                             in={i >= picker_index && i < picker_index + picker_length}>
-                                            <img src={img} className={classes.picker_image} alt='Meme' />
+                                            <img src={img} className={classes.picker_image}
+                                                alt='Meme' />
                                         </Slide>
                                     </Paper>
                                 </Grid>
