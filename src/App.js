@@ -57,17 +57,29 @@ export default function App() {
     test_grpc();
   }
 
+  function crop_mime(base64_string) {
+    let i = 0;
+    while (base64_string[i] !== ',') {
+      i++;
+    }
+
+    return base64_string.slice(i+1);
+  }
+
   async function test_grpc() {
     // read meme and face images as base 64
     let meme_base64 = null, face_base64 = null;
 
     try {
       meme_base64 = await promiseFileAsDataURL(meme_image);
+      meme_base64 = crop_mime(meme_base64);
       face_base64 = await promiseFileAsDataURL(face_image);
+      face_base64 = crop_mime(face_base64);
     } catch (err) {
       console.log("error while base64 reading: ", err);
     }
-
+    console.log("meme_base64: ", meme_base64);
+    console.log("face_base64: ", face_base64);
     if (!meme_base64 || !face_base64) {
       return;
     }
@@ -81,7 +93,7 @@ export default function App() {
 
     client.faceSwap(request, {}, (err, response) => {
       if (err) {
-        console.log("error:", err);
+        console.log("grpc callback error:", err);
       } else {
         console.log("response", response.getImageOut());
       }
