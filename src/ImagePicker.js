@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Grid, IconButton, Paper, Slide, Box } from '@material-ui/core';
+import { Grid, IconButton, Paper, Slide } from '@material-ui/core';
 import LeftArrowIcon from '@material-ui/icons/ChevronLeft';
 import RightArrowIcon from '@material-ui/icons/ChevronRight';
 
@@ -9,7 +9,7 @@ import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/
 const useStyles = makeStyles(theme => ({
     picker_paper: {
         padding: '3px',
-        backgroundColor: '#e0e0e0',
+        backgroundColor: '#bfbfbf',
         overflow: 'hidden',
     },
     picker_image_paper: {
@@ -46,10 +46,10 @@ export default function ImagePicker(props) {
     const default_images_length = 7;
 
     function slide_left() {
-        setPicker_index(picker_index + 1);
+        setPicker_index(picker_index - 1);
     }
     function slide_right() {
-        setPicker_index(picker_index - 1);
+        setPicker_index(picker_index + 1);
     }
 
     function handleImagePick(img) {
@@ -61,7 +61,7 @@ export default function ImagePicker(props) {
         <Grid container alignItems="center">
             <Grid item xs={1}>
                 <IconButton onClick={slide_left}
-                    disabled={picker_index >= default_images_length - picker_length}>
+                    disabled={picker_index === 0}>
                     <LeftArrowIcon />
                 </IconButton>
             </Grid>
@@ -86,7 +86,7 @@ export default function ImagePicker(props) {
                 </Paper>
             </Grid>
             <Grid item xs={1}>
-                <IconButton onClick={slide_right} disabled={picker_index === 0}>
+                <IconButton onClick={slide_right} disabled={picker_index >= default_images_length - picker_length}>
                     <RightArrowIcon />
                 </IconButton>
             </Grid>

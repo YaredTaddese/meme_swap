@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { CloudUpload, Check, Error } from "@material-ui/icons";
+import UploadIcon from "@material-ui/icons/CloudUpload";
 import { Typography, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
 export default function ImageUploader(props) {
     const classes = useStyles();
 
-    
     let preview_image = null;
     if (props.preview_image) {
         if (typeof props.preview_image === 'string' || props.preview_image instanceof String) {
@@ -29,7 +28,7 @@ export default function ImageUploader(props) {
             preview_image = props.preview_image;
         } else {
             // assume it is image from input file
-            preview_image = URL.createObjectURL(props.preview_image); 
+            preview_image = URL.createObjectURL(props.preview_image);
         }
     }
 
@@ -58,7 +57,7 @@ export default function ImageUploader(props) {
                             </Grid>
                         ) : (
                                 <Grid>
-                                    <CloudUpload style={{ fontSize: "48px" }} />
+                                    <UploadIcon style={{ fontSize: "48px" }} />
                                     <Typography variant="body2">
                                         Click to select an image, or drag and drop it here
                                     </Typography>

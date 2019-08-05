@@ -1,10 +1,12 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Personalized Meme Service Web App
 
-## Available Scripts
+## How to start the app
 
 In the project directory, you can run:
 
-### `npm start`
+### Start the react app
+
+Using the command: `npm start`
 
 Runs the app in the development mode.<br>
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -12,57 +14,23 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
 
-### `npm test`
+### Setup envoy proxy to use grpc-web
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+In order to call grpc client from browser, you have to setup a proxy server that can map your browser request to grpc call and vice versa. Currently, envoy proxy is the best option to achieve this; and using docker, setup the required envoy proxy using the commands below: 
 
-### `npm run build`
+`docker build -t grpc_envoy -f ./envoy.Dockerfile .`
+`docker run -p 8080:8080 -p 9901:9901  grpc_envoy`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Make sure grpc server is running
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+You have to make sure the corresponding grpc server is running. You can find this grpc server from: 
+[https://github.com/yonycherkos/faceSwap](https://github.com/yonycherkos/faceSwap)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### How to generate necessary client side grpc code from image_swap.proto file (Optional)
 
-### `npm run eject`
+You must install the necessary packages to use `protoc` command for grpc-web.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Use the below command inside src folder of the project: 
+`protoc -I=. image_swap.proto --js_out=import_style=commonjs:. --grpc-web_out=import_style=commonjs,mode=grpcwebtext:.`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+This command will generate two javascript files;`image_swap_grpc_web.js` and `image_swap_bp.js`. Note if the project failed to compile after the above command, enter `/* eslint-disable */` comment in the start of the above files to disable eslint in them.

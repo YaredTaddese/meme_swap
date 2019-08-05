@@ -25,7 +25,7 @@ goog.exportSymbol('proto.ImageFileOut', null, global);
  * @extends {jspb.Message}
  * @constructor
  */
-proto.ImageFileIn = function(opt_data) {
+proto.ImageFileIn = function (opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.ImageFileIn, jspb.Message);
@@ -35,41 +35,42 @@ if (goog.DEBUG && !COMPILED) {
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.ImageFileIn.prototype.toObject = function(opt_includeInstance) {
-  return proto.ImageFileIn.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.ImageFileIn} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.ImageFileIn.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    inputImage: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    memeImage: jspb.Message.getFieldWithDefault(msg, 2, "")
+  /**
+   * Creates an object representation of this proto suitable for use in Soy templates.
+   * Field names that are reserved in JavaScript and will be renamed to pb_name.
+   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+   * For the list of reserved names please see:
+   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+   *     for transitional soy proto support: http://goto/soy-param-migration
+   * @return {!Object}
+   */
+  proto.ImageFileIn.prototype.toObject = function (opt_includeInstance) {
+    return proto.ImageFileIn.toObject(opt_includeInstance, this);
   };
 
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
+
+  /**
+   * Static version of the {@see toObject} method.
+   * @param {boolean|undefined} includeInstance Whether to include the JSPB
+   *     instance for transitional soy proto support:
+   *     http://goto/soy-param-migration
+   * @param {!proto.ImageFileIn} msg The msg instance to transform.
+   * @return {!Object}
+   * @suppress {unusedLocalVariables} f is only used for nested messages
+   */
+  proto.ImageFileIn.toObject = function (includeInstance, msg) {
+    var f, obj = {
+      inputImage: jspb.Message.getFieldWithDefault(msg, 1, ""),
+      memeImage: jspb.Message.getFieldWithDefault(msg, 2, ""),
+      mode: jspb.Message.getFieldWithDefault(msg, 3, "")
+    };
+
+    if (includeInstance) {
+      obj.$jspbMessageInstance = msg;
+    }
+    return obj;
+  };
 }
 
 
@@ -78,7 +79,7 @@ proto.ImageFileIn.toObject = function(includeInstance, msg) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.ImageFileIn}
  */
-proto.ImageFileIn.deserializeBinary = function(bytes) {
+proto.ImageFileIn.deserializeBinary = function (bytes) {
   var reader = new jspb.BinaryReader(bytes);
   var msg = new proto.ImageFileIn;
   return proto.ImageFileIn.deserializeBinaryFromReader(msg, reader);
@@ -92,24 +93,28 @@ proto.ImageFileIn.deserializeBinary = function(bytes) {
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.ImageFileIn}
  */
-proto.ImageFileIn.deserializeBinaryFromReader = function(msg, reader) {
+proto.ImageFileIn.deserializeBinaryFromReader = function (msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setInputImage(value);
-      break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setMemeImage(value);
-      break;
-    default:
-      reader.skipField();
-      break;
+      case 1:
+        var value = /** @type {string} */ (reader.readString());
+        msg.setInputImage(value);
+        break;
+      case 2:
+        var value = /** @type {string} */ (reader.readString());
+        msg.setMemeImage(value);
+        break;
+      case 3:
+        var value = /** @type {string} */ (reader.readString());
+        msg.setMode(value);
+        break;
+      default:
+        reader.skipField();
+        break;
     }
   }
   return msg;
@@ -120,7 +125,7 @@ proto.ImageFileIn.deserializeBinaryFromReader = function(msg, reader) {
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.ImageFileIn.prototype.serializeBinary = function() {
+proto.ImageFileIn.prototype.serializeBinary = function () {
   var writer = new jspb.BinaryWriter();
   proto.ImageFileIn.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
@@ -134,7 +139,7 @@ proto.ImageFileIn.prototype.serializeBinary = function() {
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.ImageFileIn.serializeBinaryToWriter = function(message, writer) {
+proto.ImageFileIn.serializeBinaryToWriter = function (message, writer) {
   var f = undefined;
   f = message.getInputImage();
   if (f.length > 0) {
@@ -150,6 +155,13 @@ proto.ImageFileIn.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getMode();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -157,13 +169,13 @@ proto.ImageFileIn.serializeBinaryToWriter = function(message, writer) {
  * optional string input_image = 1;
  * @return {string}
  */
-proto.ImageFileIn.prototype.getInputImage = function() {
+proto.ImageFileIn.prototype.getInputImage = function () {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.ImageFileIn.prototype.setInputImage = function(value) {
+proto.ImageFileIn.prototype.setInputImage = function (value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
@@ -172,14 +184,29 @@ proto.ImageFileIn.prototype.setInputImage = function(value) {
  * optional string meme_image = 2;
  * @return {string}
  */
-proto.ImageFileIn.prototype.getMemeImage = function() {
+proto.ImageFileIn.prototype.getMemeImage = function () {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
 
 /** @param {string} value */
-proto.ImageFileIn.prototype.setMemeImage = function(value) {
+proto.ImageFileIn.prototype.setMemeImage = function (value) {
   jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string mode = 3;
+ * @return {string}
+ */
+proto.ImageFileIn.prototype.getMode = function () {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/** @param {string} value */
+proto.ImageFileIn.prototype.setMode = function (value) {
+  jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
@@ -194,7 +221,7 @@ proto.ImageFileIn.prototype.setMemeImage = function(value) {
  * @extends {jspb.Message}
  * @constructor
  */
-proto.ImageFileOut = function(opt_data) {
+proto.ImageFileOut = function (opt_data) {
   jspb.Message.initialize(this, opt_data, 0, -1, null, null);
 };
 goog.inherits(proto.ImageFileOut, jspb.Message);
@@ -204,40 +231,40 @@ if (goog.DEBUG && !COMPILED) {
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
-/**
- * Creates an object representation of this proto suitable for use in Soy templates.
- * Field names that are reserved in JavaScript and will be renamed to pb_name.
- * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
- * For the list of reserved names please see:
- *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
- * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
- *     for transitional soy proto support: http://goto/soy-param-migration
- * @return {!Object}
- */
-proto.ImageFileOut.prototype.toObject = function(opt_includeInstance) {
-  return proto.ImageFileOut.toObject(opt_includeInstance, this);
-};
-
-
-/**
- * Static version of the {@see toObject} method.
- * @param {boolean|undefined} includeInstance Whether to include the JSPB
- *     instance for transitional soy proto support:
- *     http://goto/soy-param-migration
- * @param {!proto.ImageFileOut} msg The msg instance to transform.
- * @return {!Object}
- * @suppress {unusedLocalVariables} f is only used for nested messages
- */
-proto.ImageFileOut.toObject = function(includeInstance, msg) {
-  var f, obj = {
-    imageOut: jspb.Message.getFieldWithDefault(msg, 1, "")
+  /**
+   * Creates an object representation of this proto suitable for use in Soy templates.
+   * Field names that are reserved in JavaScript and will be renamed to pb_name.
+   * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+   * For the list of reserved names please see:
+   *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+   * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+   *     for transitional soy proto support: http://goto/soy-param-migration
+   * @return {!Object}
+   */
+  proto.ImageFileOut.prototype.toObject = function (opt_includeInstance) {
+    return proto.ImageFileOut.toObject(opt_includeInstance, this);
   };
 
-  if (includeInstance) {
-    obj.$jspbMessageInstance = msg;
-  }
-  return obj;
-};
+
+  /**
+   * Static version of the {@see toObject} method.
+   * @param {boolean|undefined} includeInstance Whether to include the JSPB
+   *     instance for transitional soy proto support:
+   *     http://goto/soy-param-migration
+   * @param {!proto.ImageFileOut} msg The msg instance to transform.
+   * @return {!Object}
+   * @suppress {unusedLocalVariables} f is only used for nested messages
+   */
+  proto.ImageFileOut.toObject = function (includeInstance, msg) {
+    var f, obj = {
+      imageOut: jspb.Message.getFieldWithDefault(msg, 1, "")
+    };
+
+    if (includeInstance) {
+      obj.$jspbMessageInstance = msg;
+    }
+    return obj;
+  };
 }
 
 
@@ -246,7 +273,7 @@ proto.ImageFileOut.toObject = function(includeInstance, msg) {
  * @param {jspb.ByteSource} bytes The bytes to deserialize.
  * @return {!proto.ImageFileOut}
  */
-proto.ImageFileOut.deserializeBinary = function(bytes) {
+proto.ImageFileOut.deserializeBinary = function (bytes) {
   var reader = new jspb.BinaryReader(bytes);
   var msg = new proto.ImageFileOut;
   return proto.ImageFileOut.deserializeBinaryFromReader(msg, reader);
@@ -260,20 +287,20 @@ proto.ImageFileOut.deserializeBinary = function(bytes) {
  * @param {!jspb.BinaryReader} reader The BinaryReader to use.
  * @return {!proto.ImageFileOut}
  */
-proto.ImageFileOut.deserializeBinaryFromReader = function(msg, reader) {
+proto.ImageFileOut.deserializeBinaryFromReader = function (msg, reader) {
   while (reader.nextField()) {
     if (reader.isEndGroup()) {
       break;
     }
     var field = reader.getFieldNumber();
     switch (field) {
-    case 1:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setImageOut(value);
-      break;
-    default:
-      reader.skipField();
-      break;
+      case 1:
+        var value = /** @type {string} */ (reader.readString());
+        msg.setImageOut(value);
+        break;
+      default:
+        reader.skipField();
+        break;
     }
   }
   return msg;
@@ -284,7 +311,7 @@ proto.ImageFileOut.deserializeBinaryFromReader = function(msg, reader) {
  * Serializes the message to binary data (in protobuf wire format).
  * @return {!Uint8Array}
  */
-proto.ImageFileOut.prototype.serializeBinary = function() {
+proto.ImageFileOut.prototype.serializeBinary = function () {
   var writer = new jspb.BinaryWriter();
   proto.ImageFileOut.serializeBinaryToWriter(this, writer);
   return writer.getResultBuffer();
@@ -298,7 +325,7 @@ proto.ImageFileOut.prototype.serializeBinary = function() {
  * @param {!jspb.BinaryWriter} writer
  * @suppress {unusedLocalVariables} f is only used for nested messages
  */
-proto.ImageFileOut.serializeBinaryToWriter = function(message, writer) {
+proto.ImageFileOut.serializeBinaryToWriter = function (message, writer) {
   var f = undefined;
   f = message.getImageOut();
   if (f.length > 0) {
@@ -314,13 +341,13 @@ proto.ImageFileOut.serializeBinaryToWriter = function(message, writer) {
  * optional string image_out = 1;
  * @return {string}
  */
-proto.ImageFileOut.prototype.getImageOut = function() {
+proto.ImageFileOut.prototype.getImageOut = function () {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
 
 /** @param {string} value */
-proto.ImageFileOut.prototype.setImageOut = function(value) {
+proto.ImageFileOut.prototype.setImageOut = function (value) {
   jspb.Message.setProto3StringField(this, 1, value);
 };
 
