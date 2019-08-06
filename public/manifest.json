@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Personalized Meme App",
+  "name": "Personalized Meme Service App",
   "icons": [
     {
       "src": "favicon.ico",

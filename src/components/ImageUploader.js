@@ -33,8 +33,6 @@ export default function ImageUploader(props) {
     }
 
     function onDrop(accepted_files) {
-        console.log("files: ", accepted_files);
-
         props.handleImageUpload(accepted_files[0]);
     }
 

@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
 
 import {
   Container, Divider, Grid, Typography, AppBar,
@@ -14,11 +12,11 @@ import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import DownloadIcon from '@material-ui/icons/CloudDownloadOutlined';
 import BackIcon from '@material-ui/icons/ArrowBack';
 
-import ImageUploader from './ImageUploader';
-import ImagePicker from './ImagePicker';
+import ImageUploader from './components/ImageUploader';
+import ImagePicker from './components/ImagePicker';
 
-const { ImageFileIn, ImageFileOut } = require('./image_swap_pb');
-const { FaceSwapClient } = require('./image_swap_grpc_web_pb');
+const { ImageFileIn, ImageFileOut } = require('./grpc/image_swap_pb');
+const { FaceSwapClient } = require('./grpc/image_swap_grpc_web_pb');
 
 const theme = createMuiTheme({
   palette: {
@@ -35,27 +33,13 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
     textAlign: 'center',
   },
-  section1: {
-    padding: theme.spacing(3, 2),
-  },
-  leftIcon: {
-    marginRight: theme.spacing(1),
-  },
-  gutterBottom: {
-    paddingBottom: theme.spacing(2),
-  },
-  preview_image: {
-    maxWidth: "100%"
-  },
-  image_paper: {
-    lineHeight: 0,
-  },
-  full_width: {
-    width: '100%',
-  },
-  radio_label: {
-    marginLeft: 0,  // fixes some weird negative margin
-  }
+  section1: { padding: theme.spacing(3, 2) },
+  leftIcon: { marginRight: theme.spacing(1) },
+  gutterBottom: { paddingBottom: theme.spacing(2) },
+  preview_image: { maxWidth: "100%" },
+  image_paper: { lineHeight: 0, },
+  full_width: { width: '100%' },
+  radio_label: { marginLeft: 0,  /* fixes some weird negative margin */ }
 }));
 
 export default function App() {
@@ -69,10 +53,13 @@ export default function App() {
 
   let file_reader = new FileReader();   // to read face image and meme image as base64
 
+  /**
+   * Swap given face image into meme image
+   */
   function swapFaces() {
     setCalling(true);
 
-    test_grpc();
+    call_grpc();
   }
 
   /**
@@ -88,7 +75,10 @@ export default function App() {
     return base64_string.slice(i + 1);
   }
 
-  async function test_grpc() {
+  /**
+   * Call grpc server in appropriate manner
+   */
+  async function call_grpc() {
     // read meme and face images as base 64
     let meme_base64 = null, face_base64 = null;
 
@@ -129,7 +119,6 @@ export default function App() {
           // connection failure
         }
       } else {
-        console.log("response: ", response.getImageOut());
         let mime = 'data:image/jpeg;base64,';   // ! assumes server result as jpeg
         setResult_image(mime + response.getImageOut());
       }
@@ -173,7 +162,6 @@ export default function App() {
 
         canvas.getContext('2d').drawImage(this, 0, 0);
         let image_base64 = canvas.toDataURL();
-        console.log('canvas.todataurl: ', image_base64);
         resolve(image_base64);
       }
 

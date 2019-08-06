@@ -43,7 +43,6 @@ export default function ImagePicker(props) {
     ]);
     const [picker_index, setPicker_index] = useState(0);
     const picker_length = 3;
-    const default_images_length = 7;
 
     function slide_left() {
         setPicker_index(picker_index - 1);
@@ -54,7 +53,6 @@ export default function ImagePicker(props) {
 
     function handleImagePick(img) {
         props.handleImagePick(img);
-        console.log('image pick: ', img);
     }
 
     return (
@@ -86,7 +84,7 @@ export default function ImagePicker(props) {
                 </Paper>
             </Grid>
             <Grid item xs={1}>
-                <IconButton onClick={slide_right} disabled={picker_index >= default_images_length - picker_length}>
+                <IconButton onClick={slide_right} disabled={picker_index >= default_images.length - picker_length}>
                     <RightArrowIcon />
                 </IconButton>
             </Grid>
