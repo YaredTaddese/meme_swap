@@ -19,7 +19,7 @@ You will also see any lint errors in the console.
 In order to call grpc client from browser, you have to setup a proxy server that can map your browser request to grpc call and vice versa. Currently, envoy proxy is the best option to achieve this; and using docker, setup the required envoy proxy using the commands below: 
 
 - `docker build -t grpc_envoy -f ./envoy.Dockerfile .`
-- `docker run -p 8080:8080 -p 9901:9901  grpc_envoy`
+- `docker run --net=host -p 8080:8080 -p 9901:9901  grpc_envoy`
 
 ### Make sure grpc server is running
 
