@@ -304,7 +304,7 @@ export default function App() {
               <Grid item xs={12}>
                 <Grid container justify='center'>
                   <Grid item>
-                    <IconButton component='a' href={result_image} color="primary">
+                    <IconButton component='a' href={result_image} download='swapped_meme' color='primary'>
                       <DownloadIcon fontSize='large' />
                     </IconButton>
                   </Grid>
