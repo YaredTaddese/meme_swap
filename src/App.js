@@ -106,6 +106,7 @@ export default function App() {
       face_base64 = crop_mime(face_base64);
     } catch (err) {
       console.log("error while base64 reading: ", err);
+      setCalling(false);
     }
 
     if (!meme_base64 || !face_base64) {
@@ -113,7 +114,7 @@ export default function App() {
     }
 
     // call grpc service
-    let client = new FaceSwapClient('http://192.168.1.57:8080');
+    let client = new FaceSwapClient('http://localhost:8080');
 
     let request = new ImageFileIn();
     request.setInputImage(face_base64);
@@ -124,6 +125,9 @@ export default function App() {
     client.faceSwap(request, {}, (err, response) => {
       if (err) {
         console.log("grpc callback error:", err);
+        if (err.code === 14) {
+          // connection failure
+        }
       } else {
         console.log("response: ", response.getImageOut());
         let mime = 'data:image/jpeg;base64,';   // ! assumes server result as jpeg
