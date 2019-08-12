@@ -53,6 +53,7 @@ export default function App() {
   const [mode, setMode] = useState('all');
   const [upper_text, setUpper_text] = useState('');
   const [lower_text, setLower_text] = useState('');
+  const [picker_index, setPicker_index] = useState(0);
 
   const canvasRef = React.useRef(null);
   const downloadRef = React.useRef(null);
@@ -296,7 +297,8 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item xs={12} className={classes.gutterBottom}>
-                <ImagePicker handleImagePick={handleImagePick} />
+                <ImagePicker handleImagePick={handleImagePick} setPickerIndex={setPicker_index} 
+                  picker_index={picker_index}/>
               </Grid>
 
               <Grid item xs={10} className={classes.full_width}>

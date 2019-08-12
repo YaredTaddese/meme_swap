@@ -35,16 +35,15 @@ export default function ImagePicker(props) {
     const classes = useStyles();
 
     const [default_images, setDefault_images] = useState(meme_images);
-    const [picker_index, setPicker_index] = useState(0);
 
     const picker_length = 3;    // number of images to be shown simultnously in the picker
     const meme_images_folder = 'meme_images/';   // folder in public directory containing default meme images for this picker
 
     function slide_left() {
-        setPicker_index(picker_index - 1);
+        props.setPickerIndex(props.picker_index - 1);
     }
     function slide_right() {
-        setPicker_index(picker_index + 1);
+        props.setPickerIndex(props.picker_index + 1);
     }
 
     function handleImagePick(img_path) {
@@ -55,7 +54,7 @@ export default function ImagePicker(props) {
         <Grid container alignItems="center">
             <Grid item xs={1}>
                 <IconButton onClick={slide_left}
-                    disabled={picker_index === 0}>
+                    disabled={props.picker_index === 0}>
                     <LeftArrowIcon />
                 </IconButton>
             </Grid>
@@ -64,12 +63,12 @@ export default function ImagePicker(props) {
                     <Grid container>
                         {
                             default_images.map((img, i) => (
-                                (i >= picker_index && i < picker_index + picker_length)
+                                (i >= props.picker_index && i < props.picker_index + picker_length)
                                 && <Grid item xs={4} className={classes.picker_image_grid} key={i}>
                                     <Paper square className={classes.picker_image_paper}
                                         onClick={() => handleImagePick(meme_images_folder + img)}>
-                                        <Slide direction={(i === picker_index) ? 'right' : 'left'}
-                                            in={i >= picker_index && i < picker_index + picker_length}>
+                                        <Slide direction={(i === props.picker_index) ? 'right' : 'left'}
+                                            in={i >= props.picker_index && i < props.picker_index + picker_length}>
                                             <img src={meme_images_folder + img} className={classes.picker_image}
                                                 alt='Meme' />
                                         </Slide>
@@ -81,7 +80,7 @@ export default function ImagePicker(props) {
                 </Paper>
             </Grid>
             <Grid item xs={1}>
-                <IconButton onClick={slide_right} disabled={picker_index >= default_images.length - picker_length}>
+                <IconButton onClick={slide_right} disabled={props.picker_index >= default_images.length - picker_length}>
                     <RightArrowIcon />
                 </IconButton>
             </Grid>
