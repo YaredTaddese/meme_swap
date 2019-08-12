@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Container, Divider, Grid, Typography, AppBar,
   Toolbar, Button, Paper, IconButton, CircularProgress,
-  FormControl, FormControlLabel, RadioGroup, Radio
+  FormControl, FormControlLabel, RadioGroup, Radio, TextField
 } from "@material-ui/core";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
@@ -15,7 +15,7 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 import ImageUploader from './components/ImageUploader';
 import ImagePicker from './components/ImagePicker';
 
-const { ImageFileIn, ImageFileOut } = require('./grpc/image_swap_pb');
+const { ImageFileIn } = require('./grpc/image_swap_pb');
 const { FaceSwapClient } = require('./grpc/image_swap_grpc_web_pb');
 
 const theme = createMuiTheme({
@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   preview_image: { maxWidth: "100%" },
   image_paper: { lineHeight: 0, },
   full_width: { width: '100%' },
+  half_width: { width: '50%' },
   radio_label: { marginLeft: 0,  /* fixes some weird negative margin */ }
 }));
 
@@ -50,6 +51,11 @@ export default function App() {
   const [result_image, setResult_image] = useState(null);
   const [calling, setCalling] = useState(false);
   const [mode, setMode] = useState('all');
+  const [upper_text, setUpper_text] = useState('');
+  const [lower_text, setLower_text] = useState('');
+
+  const canvasRef = React.useRef(null);
+  const downloadRef = React.useRef(null);
 
   let file_reader = new FileReader();   // to read face image and meme image as base64
 
@@ -104,7 +110,7 @@ export default function App() {
     }
 
     // call grpc service
-    let client = new FaceSwapClient('http://localhost:8080');
+    let client = new FaceSwapClient(process.env.REACT_APP_GRPC_HOST);
 
     let request = new ImageFileIn();
     request.setInputImage(face_base64);
@@ -161,7 +167,7 @@ export default function App() {
         canvas.height = this.naturalHeight;
 
         canvas.getContext('2d').drawImage(this, 0, 0);
-        let image_base64 = canvas.toDataURL();
+        let image_base64 = canvas.toDataURL('jpg');
         resolve(image_base64);
       }
 
@@ -181,8 +187,8 @@ export default function App() {
     setFace_image(file);
   }
 
-  async function handleImagePick(file) {
-    let meme = await promiseImagePathAsDataURL(file);
+  async function handleImagePick(file_path) {
+    let meme = await promiseImagePathAsDataURL(file_path);
     setMeme_image(meme);
   }
 
@@ -193,6 +199,76 @@ export default function App() {
   function handleModeChange(event) {
     setMode(event.target.value);
   }
+
+  function handleUpperTextChange(event) {
+    console.log('uppertext', event);
+    setUpper_text(event.target.value);
+  }
+
+  function handleLowerTextChange(event) {
+    setLower_text(event.target.value);
+  }
+
+  function set_up_canvas() {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+
+    // setup image loading logic for result image
+    let image = new Image();
+    image.onload = function () {
+      canvas.width = this.naturalWidth;
+      canvas.height = this.naturalHeight;
+
+      // draw this image
+      ctx.drawImage(this, 0, 0);
+
+      // setup text properties
+      let text_size = canvas.height * 0.12;
+      ctx.font = `${text_size}px Arial`;
+      ctx.fillStyle = 'white';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      // setup text positions
+      let half_canvas_width = canvas.width / 2
+      let y_margin = canvas.height * 0.08;
+      let gap_x = 70;
+      let gap_top = y_margin;
+      let gap_bottom = canvas.height - y_margin;
+      let max_width_x = canvas.width - (2 * gap_x);
+
+      // write texts
+      ctx.fillText(upper_text, half_canvas_width, gap_top, max_width_x);
+      ctx.fillText(lower_text, half_canvas_width, gap_bottom, max_width_x);
+
+      // cursor blinking logic here
+      let use_cursor = false;
+      if (use_cursor) { // use blinking cursor for great user exprience
+        let cursor_gap = 10;
+        let text_width = ctx.measureText(upper_text).width;
+        let cursor_start_x = half_canvas_width + text_width / 2 + cursor_gap;
+        if (cursor_start_x > max_width_x + gap_x + cursor_gap) {
+          cursor_start_x = max_width_x + gap_x + cursor_gap;
+        }
+        ctx.fillText('|', cursor_start_x, gap_top, max_width_x - cursor_gap);
+      }
+
+      // setup downloadable content using anchor link
+      downloadRef.current.href = canvas.toDataURL();
+    }
+
+    // load image from result
+    image.src = result_image;
+  }
+
+  /**
+   * Logic to set result image and its text on canvas whenever they change
+   */
+  useEffect(() => {
+    if (result_image) {
+      set_up_canvas();
+    }
+  }, [result_image, upper_text, lower_text]);
 
   return (
     <React.Fragment>
@@ -283,16 +359,26 @@ export default function App() {
                   Face Swapped Meme Image
                 </Typography>
               </Grid>
-              <Grid item xs={12} className={classes.gutterBottom}>
+              <Grid item xs={12} className={`${classes.gutterBottom} ${classes.half_width}`}>
+                <TextField id='upper_text' label='Top Text' margin="normal" fullWidth
+                  value={upper_text} onChange={handleUpperTextChange}
+                  helperText='Meme text to be at the top of the image' />
+              </Grid>
+              <Grid item xs={12}>
                 <Paper square className={classes.image_paper}>
-                  <img src={result_image} alt='Generated Meme' className={classes.preview_image} />
+                  <canvas ref={canvasRef} className={classes.preview_image} />
                 </Paper>
+              </Grid>
+              <Grid item xs={12} className={`${classes.gutterBottom} ${classes.half_width}`}>
+                <TextField id='lower_text' label='Bottom Text' margin="normal" fullWidth
+                  value={lower_text} onChange={handleLowerTextChange}
+                  helperText='Meme text to be at the bottom of the image' />
               </Grid>
 
               <Grid item xs={12}>
                 <Grid container justify='center'>
                   <Grid item>
-                    <IconButton component='a' href={result_image} download='swapped_meme' color='primary'>
+                    <IconButton component='a' ref={downloadRef} href='' download='swapped_meme' color='primary'>
                       <DownloadIcon fontSize='large' />
                     </IconButton>
                   </Grid>

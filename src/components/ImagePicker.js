@@ -4,7 +4,9 @@ import { Grid, IconButton, Paper, Slide } from '@material-ui/core';
 import LeftArrowIcon from '@material-ui/icons/ChevronLeft';
 import RightArrowIcon from '@material-ui/icons/ChevronRight';
 
-import { makeStyles, createMuiTheme, MuiThemeProvider } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+
+import meme_images from '../default_meme_images';
 
 const useStyles = makeStyles(theme => ({
     picker_paper: {
@@ -32,17 +34,11 @@ const useStyles = makeStyles(theme => ({
 export default function ImagePicker(props) {
     const classes = useStyles();
 
-    const [default_images, setDefault_images] = useState([
-        'images/anchorman.jpg',
-        'images/aniston-sumo.jpg',
-        'images/baby2.jpg',
-        'images/black_and_white.jpg',
-        'images/game of thrones2.jpg',
-        'images/game_of_thrones3.jpg',
-        'images/kalise.jpg',
-    ]);
+    const [default_images, setDefault_images] = useState(meme_images);
     const [picker_index, setPicker_index] = useState(0);
-    const picker_length = 3;
+
+    const picker_length = 3;    // number of images to be shown simultnously in the picker
+    const meme_images_folder = 'meme_images/';   // folder in public directory containing default meme images for this picker
 
     function slide_left() {
         setPicker_index(picker_index - 1);
@@ -51,8 +47,8 @@ export default function ImagePicker(props) {
         setPicker_index(picker_index + 1);
     }
 
-    function handleImagePick(img) {
-        props.handleImagePick(img);
+    function handleImagePick(img_path) {
+        props.handleImagePick(img_path);
     }
 
     return (
@@ -69,11 +65,12 @@ export default function ImagePicker(props) {
                         {
                             default_images.map((img, i) => (
                                 (i >= picker_index && i < picker_index + picker_length)
-                                && <Grid item xs={4} className={classes.picker_image_grid}>
-                                    <Paper square className={classes.picker_image_paper} onClick={() => handleImagePick(img)}>
+                                && <Grid item xs={4} className={classes.picker_image_grid} key={i}>
+                                    <Paper square className={classes.picker_image_paper}
+                                        onClick={() => handleImagePick(meme_images_folder + img)}>
                                         <Slide direction={(i === picker_index) ? 'right' : 'left'}
                                             in={i >= picker_index && i < picker_index + picker_length}>
-                                            <img src={img} className={classes.picker_image}
+                                            <img src={meme_images_folder + img} className={classes.picker_image}
                                                 alt='Meme' />
                                         </Slide>
                                     </Paper>
