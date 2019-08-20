@@ -14,6 +14,7 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 
 import ImageUploader from './components/ImageUploader';
 import ImagePicker from './components/ImagePicker';
+import ColorPicker from './components/ColorPicker';
 
 const { ImageFileIn } = require('./grpc/image_swap_pb');
 const { FaceSwapClient } = require('./grpc/image_swap_grpc_web_pb');
@@ -53,7 +54,9 @@ export default function App() {
   const [mode, setMode] = useState('all');
   const [upper_text, setUpper_text] = useState('');
   const [lower_text, setLower_text] = useState('');
-  const [picker_index, setPicker_index] = useState(0);
+  const [picker_index, setPicker_index] = useState(0);  // image picker current index state
+  const [text_color, setPicker_color] = useState('white');  // text color picker state
+  const [text_size, setText_size] = useState(2);
 
   const canvasRef = React.useRef(null);
   const downloadRef = React.useRef(null);
@@ -224,15 +227,15 @@ export default function App() {
       ctx.drawImage(this, 0, 0);
 
       // setup text properties
-      let text_size = canvas.height * 0.12;
-      ctx.font = `${text_size}px Arial`;
-      ctx.fillStyle = 'white';
+      let canvas_text_size = canvas.height * 0.05 * text_size;
+      ctx.font = `${canvas_text_size}px Arial`;
+      ctx.fillStyle = text_color;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       // setup text positions
       let half_canvas_width = canvas.width / 2
-      let y_margin = canvas.height * 0.08;
+      let y_margin = canvas.height * 0.05 + canvas_text_size / 2;
       let gap_x = 70;
       let gap_top = y_margin;
       let gap_bottom = canvas.height - y_margin;
@@ -269,7 +272,19 @@ export default function App() {
     if (result_image) {
       set_up_canvas();
     }
-  }, [result_image, upper_text, lower_text]);
+  }, [result_image, upper_text, lower_text, text_color, text_size]);
+
+  /**
+   * Changes color of text that will be used to write on meme image canvas
+   * @param {css color value} color new changed color from color picker component
+   */
+  function handleColorChange(color) {
+    setPicker_color(color);
+  }
+
+  function handleTextSizeChange(event) {
+    setText_size(event.target.value);
+  }
 
   return (
     <React.Fragment>
@@ -297,8 +312,8 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item xs={12} className={classes.gutterBottom}>
-                <ImagePicker handleImagePick={handleImagePick} setPickerIndex={setPicker_index} 
-                  picker_index={picker_index}/>
+                <ImagePicker handleImagePick={handleImagePick} setPickerIndex={setPicker_index}
+                  picker_index={picker_index} />
               </Grid>
 
               <Grid item xs={10} className={classes.full_width}>
@@ -360,6 +375,23 @@ export default function App() {
                 <Typography variant='h6' gutterBottom className={classes.title}>
                   Face Swapped Meme Image
                 </Typography>
+              </Grid>
+              <Grid item xs={12} className={classes.half_width}>
+                <Grid container>
+                  <Grid item xs={6}>
+                    <ColorPicker onColorChange={handleColorChange} color={text_color} />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <TextField
+                      id="text_size"
+                      label="Text Size"
+                      className={classes.textField}
+                      type="number"
+                      value={text_size}
+                      onChange={handleTextSizeChange}
+                    />
+                  </Grid>
+                </Grid>
               </Grid>
               <Grid item xs={12} className={`${classes.gutterBottom} ${classes.half_width}`}>
                 <TextField id='upper_text' label='Top Text' margin="normal" fullWidth
