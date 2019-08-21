@@ -13,8 +13,8 @@ import DownloadIcon from '@material-ui/icons/CloudDownloadOutlined';
 import BackIcon from '@material-ui/icons/ArrowBack';
 
 import ImageUploader from './components/ImageUploader';
-import ImagePicker from './components/ImagePicker';
 import ColorPicker from './components/ColorPicker';
+import GalleryImagePicker from './components/GalleryImagePicker';
 
 const { ImageFileIn } = require('./grpc/image_swap_pb');
 const { FaceSwapClient } = require('./grpc/image_swap_grpc_web_pb');
@@ -54,7 +54,6 @@ export default function App() {
   const [mode, setMode] = useState('all');
   const [upper_text, setUpper_text] = useState('');
   const [lower_text, setLower_text] = useState('');
-  const [picker_index, setPicker_index] = useState(0);  // image picker current index state
   const [text_color, setPicker_color] = useState('white');  // text color picker state
   const [text_size, setText_size] = useState(2);
 
@@ -205,7 +204,6 @@ export default function App() {
   }
 
   function handleUpperTextChange(event) {
-    console.log('uppertext', event);
     setUpper_text(event.target.value);
   }
 
@@ -312,8 +310,7 @@ export default function App() {
                 </Typography>
               </Grid>
               <Grid item xs={12} className={classes.gutterBottom}>
-                <ImagePicker handleImagePick={handleImagePick} setPickerIndex={setPicker_index}
-                  picker_index={picker_index} />
+                <GalleryImagePicker handleImagePick={handleImagePick} />
               </Grid>
 
               <Grid item xs={10} className={classes.full_width}>
