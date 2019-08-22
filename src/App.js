@@ -41,6 +41,7 @@ const useStyles = makeStyles(theme => ({
   image_paper: { lineHeight: 0, },
   full_width: { width: '100%' },
   half_width: { width: '50%' },
+  content_center: { justifyContent: 'center' },
   radio_label: { marginLeft: 0,  /* fixes some weird negative margin */ }
 }));
 
@@ -338,9 +339,9 @@ export default function App() {
             <Divider variant="middle" />
 
             <Grid container direction='column' alignItems='center' className={classes.section1}>
-              <Grid item align='center' xs={12} className={classes.gutterBottom}>
+              <Grid item xs={12} className={classes.gutterBottom}>
                 <FormControl component='fieldset'>
-                  <RadioGroup row
+                  <RadioGroup row className={classes.content_center}
                     name="mode"
                     value={mode}
                     onChange={handleModeChange}

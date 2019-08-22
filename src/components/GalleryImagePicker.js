@@ -6,40 +6,20 @@ import GridListTile from '@material-ui/core/GridListTile';
 import meme_images from '../default_meme_images';
 
 const useStyles = makeStyles(theme => ({
-    relative_container: {
-        position: 'relative',
-        height: 164
-    },
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-        overflow: 'hidden',
-        backgroundColor: '#bfbfbf',
-        position: 'absolute',
-        left: -255, // hack to accomodate the centering effect of parent
-        [theme.breakpoints.down('xs')]: {   // dumb hack to accomodate xs screens
-            left: -150,
-        }
-    },
     gridList: {
-        width: 500,
-        maxHeight: 160,
+        maxHeight: 164,
         transition: 'max-height 0.25s ease-out',
+        overflowX: 'hidden',
         '&:hover': {
             // maxHeight: 3*160, //used to slide up and down
             transition: 'max-height 0.25s ease-in',
-            cursor: 'pointer'
+            cursor: 'pointer',
         },
-        [theme.breakpoints.down('xs')]: {   // dumb hack to accomodate xs screens
-            width: 311,
-        }
     },
     tile: {
-        cursor: 'pointer',
         transition: 'transform .2s',
         '&:hover': {
-            transform: 'scale(1.05)'
+            transform: 'scale(1.03)'
         }
     }
 }));
@@ -110,19 +90,15 @@ export default function GalleryImagePicker(props) {
     }
 
     return (
-        <div className={classes.relative_container}>
-            <div className={classes.root}>
-                <GridList ref={grid_ref} cellHeight={160} className={classes.gridList}
-                    cols={grid_cols} onMouseEnter={mouse_entering}
-                    onMouseLeave={mouse_leaving} onScroll={handleScroll}>
-                    {active_memes.map((image, index) => (
-                        <GridListTile key={index} className={classes.tile}
-                            onClick={() => pickImage(meme_images_folder + image, index)}>
-                            <img src={meme_images_folder + image} alt="Meme" />
-                        </GridListTile>
-                    ))}
-                </GridList>
-            </div>
-        </div>
+        <GridList ref={grid_ref} cellHeight={160} className={classes.gridList}
+            cols={grid_cols} onMouseEnter={mouse_entering}
+            onMouseLeave={mouse_leaving} onScroll={handleScroll}>
+            {active_memes.map((image, index) => (
+                <GridListTile key={index} className={classes.tile}
+                    onClick={() => pickImage(meme_images_folder + image, index)}>
+                    <img src={meme_images_folder + image} alt="Meme" />
+                </GridListTile>
+            ))}
+        </GridList>
     );
 }
