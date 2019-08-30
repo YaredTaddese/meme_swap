@@ -58,7 +58,7 @@ export default function ColorPicker(props) {
 
     return (
         <div>
-            <Typography variant='span' className={classes.material_label}>
+            <Typography variant='subtitle1' className={classes.material_label}>
                 Text Color
             </Typography>
             <Button

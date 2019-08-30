@@ -15,6 +15,7 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 import ImageUploader from './components/ImageUploader';
 import ColorPicker from './components/ColorPicker';
 import GalleryImagePicker from './components/GalleryImagePicker';
+import SnackBar from './components/SnackBar';
 
 const { ImageFileIn } = require('./grpc/image_swap_pb');
 const { FaceSwapClient } = require('./grpc/image_swap_grpc_web_pb');
@@ -57,19 +58,25 @@ export default function App() {
   const [lower_text, setLower_text] = useState('');
   const [text_color, setPicker_color] = useState('white');  // text color picker state
   const [text_size, setText_size] = useState(2);
+  const [error_message, setError_message] = useState('');
 
   const canvasRef = React.useRef(null);
   const downloadRef = React.useRef(null);
 
   let file_reader = new FileReader();   // to read face image and meme image as base64
+  let supported_files = ['image/jpeg', 'image/jpg', 'image/png'];
 
   /**
    * Swap given face image into meme image
    */
   function swapFaces() {
-    setCalling(true);
-
-    call_grpc();
+    if (meme_image == null) {
+      showSnackBar('No meme image is selected.')
+    } else if (face_image == null) {
+      showSnackBar('No input face image is selected.');
+    } else {
+      call_grpc();
+    }
   }
 
   /**
@@ -77,6 +84,8 @@ export default function App() {
    * @param {string} base64_string base64 image string as used in img tag src property
    */
   function crop_mime(base64_string) {
+    if (!base64_string) return null;
+
     let i = 0;
     while (base64_string[i] !== ',') {
       i++;
@@ -86,30 +95,54 @@ export default function App() {
   }
 
   /**
+   * Check if selected file is valid for processing
+   * @param {File} file input file selected by user
+   */
+  function valid_file(file) {
+    return supported_files.includes(file.type);
+  }
+
+  /**
+   * Convert given image to base64 ready to be used for grpc purposes
+   * @param {string || File} image image to be converted to base64 string with no mime start
+   * @param {string} image_name name of image used when referring image in error messages
+   */
+  async function get_image_base64(image, image_name) {
+    let image_base64 = null;
+
+    if (typeof image === 'string' || image instanceof String) {
+      // assume it is base64 encoded image
+      image_base64 = image;
+    } else {
+      // assume it is image from file input selected by user
+      if (!valid_file(image)) {
+        showSnackBar(`Unsupported file for ${image_name} image input selected.`);
+      } else {
+        try {
+          image_base64 = await promiseFileAsDataURL(image);
+        } catch (err) {
+          showSnackBar(`Error while reading ${image_name} image input. Check if appropriate file are selected.`);
+          console.log("error while base64 reading: ", err);
+        }
+      }
+    }
+
+    image_base64 = crop_mime(image_base64);
+
+    return image_base64;
+  }
+
+  /**
    * Call grpc server in appropriate manner
    */
   async function call_grpc() {
+    setCalling(true);
+
     // read meme and face images as base 64
-    let meme_base64 = null, face_base64 = null;
-
-    try {
-      if (typeof meme_image === 'string' || meme_image instanceof String) {
-        // assume it is image path or base64 encoded image
-        meme_base64 = meme_image;
-      } else {
-        // assume it is image from input file
-        meme_base64 = await promiseFileAsDataURL(meme_image);
-      }
-
-      meme_base64 = crop_mime(meme_base64);
-      face_base64 = await promiseFileAsDataURL(face_image);
-      face_base64 = crop_mime(face_base64);
-    } catch (err) {
-      console.log("error while base64 reading: ", err);
-      setCalling(false);
-    }
-
+    let meme_base64 = await get_image_base64(meme_image, 'meme');
+    let face_base64 = await get_image_base64(face_image, 'face');
     if (!meme_base64 || !face_base64) {
+      setCalling(false);
       return;
     }
 
@@ -123,14 +156,27 @@ export default function App() {
     request.setMode(grpc_mode);
 
     client.faceSwap(request, {}, (err, response) => {
+      // err and response both are returned mutually exclusively(wierd)
       if (err) {
         console.log("grpc callback error:", err);
         if (err.code === 14) {
           // connection failure
+          showSnackBar('Could not connect to server. Please, check your connection.');
+        } else if (err.code === 2) {
+          // uncatched exception from server implementation
+          showSnackBar('Server Error. Please, try again.');
+        } else if (err.message) {
+          // custom server exception with message from grpc implementation
+          showSnackBar(err.message);
+          console.log("custom exception: ", err.message);
         }
-      } else {
+      }
+
+      if (response && response.getImageOut()) {
         let mime = 'data:image/jpeg;base64,';   // ! assumes server result as jpeg
         setResult_image(mime + response.getImageOut());
+      } else {// when there is error, empty response is sent
+        console.log('warning: empty response from server');
       }
 
       setCalling(false);
@@ -285,6 +331,14 @@ export default function App() {
     setText_size(event.target.value);
   }
 
+  function closeSnackBar(event) {
+    setError_message('');
+  }
+
+  function showSnackBar(message) {
+    setError_message(message);
+  }
+
   return (
     <React.Fragment>
       <CssBaseline />
@@ -420,6 +474,8 @@ export default function App() {
             </Grid>
 
           </Paper>}
+
+          <SnackBar message={error_message} closeSnackBar={closeSnackBar} />
         </Container>
       </MuiThemeProvider>
     </React.Fragment>
