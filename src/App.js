@@ -11,6 +11,7 @@ import blue from '@material-ui/core/colors/blue';
 import RecentActorsIcon from '@material-ui/icons/RecentActors';
 import DownloadIcon from '@material-ui/icons/CloudDownloadOutlined';
 import BackIcon from '@material-ui/icons/ArrowBack';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import ImageUploader from './components/ImageUploader';
 import ColorPicker from './components/ColorPicker';
@@ -43,7 +44,13 @@ const useStyles = makeStyles(theme => ({
   full_width: { width: '100%' },
   half_width: { width: '50%' },
   content_center: { justifyContent: 'center' },
-  radio_label: { marginLeft: 0,  /* fixes some weird negative margin */ }
+  radio_label: { marginLeft: 0,  /* fixes some weird negative margin */ },
+  material_label: {
+    color: 'rgba(0,0,0,0.54)',
+    fontSize: '12px',
+    position: 'absolute'
+  },
+
 }));
 
 export default function App() {
@@ -59,7 +66,7 @@ export default function App() {
   const [text_color, setPicker_color] = useState('white');  // text color picker state
   const [text_size, setText_size] = useState(2);
   const [error_message, setError_message] = useState('');
-
+  const [bold_chekcked, setBold_cheked] = useState(false);
   const canvasRef = React.useRef(null);
   const downloadRef = React.useRef(null);
 
@@ -258,6 +265,10 @@ export default function App() {
     setLower_text(event.target.value);
   }
 
+  function handleBoldCheked(event) {
+    setBold_cheked(bold_chekcked ? false : true);
+  }
+
   function set_up_canvas() {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -273,7 +284,8 @@ export default function App() {
 
       // setup text properties
       let canvas_text_size = canvas.height * 0.05 * text_size;
-      ctx.font = `${canvas_text_size}px Arial`;
+      let canvas_bold_property = `${bold_chekcked ? 'bold' : ''}`;
+      ctx.font = `${canvas_bold_property} ${canvas_text_size}px Arial`;
       ctx.fillStyle = text_color;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -317,7 +329,7 @@ export default function App() {
     if (result_image) {
       set_up_canvas();
     }
-  }, [result_image, upper_text, lower_text, text_color, text_size]);
+  }, [result_image, upper_text, lower_text, bold_chekcked, text_color, text_size]);
 
   /**
    * Changes color of text that will be used to write on meme image canvas
@@ -430,10 +442,10 @@ export default function App() {
               </Grid>
               <Grid item xs={12} className={classes.half_width}>
                 <Grid container>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <ColorPicker onColorChange={handleColorChange} color={text_color} />
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <TextField
                       id="text_size"
                       label="Text Size"
@@ -442,6 +454,16 @@ export default function App() {
                       value={text_size}
                       onChange={handleTextSizeChange}
                     />
+                  </Grid>
+                  <Grid item xs={4}>
+                    <div>
+                    <FormControlLabel
+                      control={<Checkbox onClick={handleBoldCheked} color="primary" />}
+                      checked = {bold_chekcked}
+                      labelPlacement="top"
+                      label="bold"
+                    />
+                    </div>
                   </Grid>
                 </Grid>
               </Grid>
