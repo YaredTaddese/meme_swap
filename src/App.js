@@ -168,12 +168,14 @@ export default function App() {
         console.log("grpc callback error:", err);
         if (err.code === 14) {
           // connection failure
+          // ! also could be 400 and 500 level error from grpc(very rare)
           showSnackBar('Could not connect to server. Please, check your connection.');
         } else if (err.code === 2) {
           // uncatched exception from server implementation
           showSnackBar('Server Error. Please, try again.');
         } else if (err.message) {
           // custom server exception with message from grpc implementation
+          // ! also could be grpc errors which are not custom but have message attributes
           showSnackBar(err.message);
           console.log("custom exception: ", err.message);
         }
